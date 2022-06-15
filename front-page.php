@@ -17,10 +17,22 @@
         <div class="full-width-split__inner">
           <h2 class="headline headline--small-plus t-center">Upcoming Events</h2>
           <?php 
+            $today = date('Ymd');
             //custom query
             $homepageEvents = new WP_Query(array(
-              'post_per_page' => 2,
+              'post_per_page' => 2,// -1returns everyting that meets your query all at onece
               'post_type' => 'event',
+              'meta_key'=> 'event_date',//must also be present in the query. This value allows for numerical sorting as noted above in ‘meta_value‘.
+              'orderby' => 'meta_value',//rand for random
+              'order' => 'ASC',//by default this is DESC desending
+              'meta_query' => array(// shows just the post taht are equal or more than the actual date
+                array(
+                  'key' => 'event_date',
+                  'compare' => '>=',
+                  'value' => $today,
+                  'type' => 'numeric'
+                )
+              )
             ));
 
             while ($homepageEvents -> have_posts()) {
@@ -30,7 +42,7 @@
               <a class="event-summary__date t-center" href="#">
                 <span class="event-summary__month"><?php 
                 $eventDate = new DateTime(get_field('event_date'));
-               echo $eventDate -> format('M');
+               echo $eventDate -> format('M');// return month
                 ?></span>
                 <span class="event-summary__day"><?php echo $eventDate -> format('d'); ?></span>
               </a>
