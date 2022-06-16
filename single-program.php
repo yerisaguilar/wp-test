@@ -1,4 +1,5 @@
 <?php 
+//60
  get_header();
 ?>
 <?php
@@ -34,6 +35,42 @@
         <?php the_content(  );?>
     </div>
     <?php 
+
+$today = date('Ymd');
+//custom query
+$relatedProfessor = new WP_Query(array(
+    'post_per_page' => -1,// -1returns everyting that meets your query all at onece
+    'post_type' => 'profesor',
+    'orderby' => 'title',//rand for random
+    'order' => 'ASC',//by default this is DESC desending
+    'meta_query' => array(// shows just the post taht are equal or more than the actual date
+   
+    array(
+        'key' => 'related_programs',//array(12,120,1250)
+        'compare' => 'LIKE',
+        'value' => '"'. get_the_ID().'"'
+    )
+    )
+));
+?>
+<?php
+if($relatedProfessor->have_posts()){
+    echo '<hr class="section-break"/>';
+echo '<h2 class="headline headline--medium">'.get_the_title().' Profesors</h2>';
+echo '<ul class="">';
+while ($relatedProfessor -> have_posts()) {
+    $relatedProfessor->the_post();
+    //63
+    ?>
+<li><a href="<?php echo the_permalink(); ?>"><?php the_title(); the_ID(); ?></a></li>
+<?php
+        }
+        echo '</ul>';
+}
+
+wp_reset_postdata();
+?>
+<?php
     $today = date('Ymd');
     //custom query
     $homepageEvents = new WP_Query(array(
