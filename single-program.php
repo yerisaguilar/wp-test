@@ -57,12 +57,16 @@ $relatedProfessor = new WP_Query(array(
 if($relatedProfessor->have_posts()){
     echo '<hr class="section-break"/>';
 echo '<h2 class="headline headline--medium">'.get_the_title().' Profesors</h2>';
-echo '<ul class="">';
+echo '<ul class="professor-cards">';
 while ($relatedProfessor -> have_posts()) {
     $relatedProfessor->the_post();
     //63
     ?>
-<li><a href="<?php echo the_permalink(); ?>"><?php the_title(); the_ID(); ?></a></li>
+<li class="professor-card__list-item">
+    <a class="professor-card" href="<?php echo the_permalink(); ?>">
+    <img class="professor-card__image" src="<?php the_post_thumbnail_url() ?>" alt="">
+    <span class="professor-card__name"><?php the_title( ); ?></span>
+</a></li>
 <?php
         }
         echo '</ul>';

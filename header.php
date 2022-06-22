@@ -1,3 +1,10 @@
+<?php
+/**
+ * The Header template for our theme
+ *
+ * Displays all of the <head> section 
+ */
+?>
 <!DOCTYPE html>
 <html <?php language_attributes();?>>
 <head>

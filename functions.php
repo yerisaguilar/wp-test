@@ -17,11 +17,14 @@ function university_files(){
 add_action( 'wp_enqueue_scripts','university_files' );
 
 function university_features(){
-    register_nav_menu( 'headerMenuLocation', 'Header Menu Location' );//register header menu location
+    // register_nav_menu( 'headerMenuLocation', 'Header Menu Location' );//register header menu location
     
-    register_nav_menu( 'footerLocationOne', 'Footer Location One' );//explore menu
-    register_nav_menu( 'footerLocationTwo', 'Footer Location Two' );//learn menu
+    // register_nav_menu( 'footerLocationOne', 'Footer Location One' );//explore menu
+    // register_nav_menu( 'footerLocationTwo', 'Footer Location Two' );//learn menu
+
     add_theme_support( 'title-tag');
+    add_theme_support( 'post-thumbnails');
+    add_image_size( 'professorLandscape', 400, 260, false );
 }
 
 add_action('after_setup_theme', 'university_features' );

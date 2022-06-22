@@ -1,3 +1,11 @@
+<?php 
+/**
+ * The template for displaying the footer
+ *
+ * Contains footer content 
+ */
+?>
+
 <footer class="site-footer">
       <div class="site-footer__inner container container--narrow">
         <div class="group">
