@@ -46,10 +46,9 @@ class Search {
     }
     getResults(){
         $.when(
-            $.getJSON(`${universityData.root_url}/wp-json/wp/v2/posts?search=${this.searchInput.val()}`),
-            $.getJSON(`${universityData.root_url}/wp-json/wp/v2/pages?search=${this.searchInput.val()}`)
-        ).then( (posts,pages) => {
-                var combinedResults = posts[0].concat(pages[0]);
+            $.getJSON(`${universityData.root_url}/wp-json/university/v1/search?term=${this.searchInput.val()}`),
+        ).then( (posts) => {
+                var combinedResults = posts[0];
                 this.resultsDiv.html(`
                 <h2 class="search-overlay__section-title">General Information</h2>
                 ${combinedResults.length? '<ul class="link-list min-list">': '<p>No general information matches the search</p>'}
