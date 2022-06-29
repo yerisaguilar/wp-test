@@ -4040,8 +4040,19 @@ class Search {
   }
 
   getResults() {
-    this.resultsDiv.html("imagine real results here!");
-    this.isSpinnerVisible = false;
+    //WP Rest API
+    jquery__WEBPACK_IMPORTED_MODULE_0___default().getJSON(`${universityData.root_url}/wp-json/wp/v2/posts?search=${this.searchInput.val()}`, posts => {
+      // alert(posts[0].title.rendered);
+      this.resultsDiv.html(`<h2 class="search-overlay__section-title">General Information</h2>
+            ${posts.length ? '<ul class="link-list min-list">' : '<p>No general information matches the search</p>'}
+            ${posts.map(item => `
+            <li>
+                <a href="${item.link}">${item.title.rendered}</a>
+            </li>`).join('')}
+                
+            ${posts.length ? '</ul>' : ''}`);
+      this.isSpinnerVisible = false;
+    });
   }
 
   openOverlay() {
@@ -4053,6 +4064,8 @@ class Search {
   closeOverlay() {
     this.searchOverlay.removeClass("search-overlay--active");
     jquery__WEBPACK_IMPORTED_MODULE_0___default()("body").removeClass("body-no-scroll");
+    this.searchInput.val("");
+    this.resultsDiv.html("");
     this.isOverlayOpen = false;
   }
 
