@@ -9,14 +9,14 @@ function universityRegisterSearch(){
 
 function universitySearchResults(){
    $mainQuery= new WP_Query(array(
-    'post_type' => array('post','page','profesor','programs','events','campuses'),
-    's' => sanitize_text_field( $_GET['term'] ) 
+    'post_type' => array('post','page','profesor','program','event','campus'),
+    's' => sanitize_text_field( $_GET['term'] ) //$_GET['term']
    ));
    $results = array(
     'generalInfo' => array() ,
     'profesors' => array(),
-    'program' => array(),
-    'event' => array(),
+    'programs' => array(),
+    'events' => array(),
     'campuses' => array()
    );
 
@@ -26,15 +26,17 @@ function universitySearchResults(){
         array_push($results['generalInfo'],array(
             'title' => get_the_title(),
             'permalink' => get_the_permalink(),
-            'content' => get_the_content()
+            'postType' => get_post_type( ),
+            'author' => get_author_name(  )
         ));
     }
 
-    if(get_post_type() == 'profesors'){
+    if(get_post_type() == 'profesor'){
         array_push($results['profesors'],array(
             'title' => get_the_title(),
             'permalink' => get_the_permalink(),
-            'content' => get_the_content()
+            'thumbnail' =>  get_the_post_thumbnail_url(0,'professorLandscape')
+
         ));
     }
     
@@ -42,19 +44,31 @@ function universitySearchResults(){
         array_push($results['programs'],array(
             'title' => get_the_title(),
             'permalink' => get_the_permalink(),
-            'content' => get_the_content()
+            'content' => get_the_content(),
+            'id' => get_the_ID(  )
         ));
     }
     
     if(get_post_type() == 'event'){
+        
+        $eventDate = new DateTime(get_field('event_date'));
+        $description = null;
+        if(has_excerpt()){
+            $description = get_the_excerpt();
+        }else{
+            $description = wp_trim_words( get_the_content(), 18 );
+        }
         array_push($results['events'],array(
             'title' => get_the_title(),
             'permalink' => get_the_permalink(),
-            'content' => get_the_content()
+            'month' => $eventDate -> format('M'),
+            'day' => $eventDate -> format('d'),
+            'excerpt' => $description,
+            'content' => wp_trim_words( get_the_content(), 10 )
         ));
     }
     
-    if(get_post_type() == 'campuse'){
+    if(get_post_type() == 'campus'){
         array_push($results['campuses'],array(
             'title' => get_the_title(),
             'permalink' => get_the_permalink(),
@@ -64,7 +78,58 @@ function universitySearchResults(){
     
    
    }
+   if($results['programs']){
+    $programsMetaQuery = array('relation' => 'OR');
 
-   return $results;
+    foreach($results['programs'] as $item){
+     array_push($programsMetaQuery, array(
+         'key' => 'related_programs',
+         'compare' => 'LIKE',
+         'value' => '"'.$item['id'].'"'
+     ));
+    }
+ // Releated programs and professors
+    $programRelationshipQuery = new WP_Query(array(
+     'post_type' => array('profesor','event'),
+     'meta_query' => $programsMetaQuery
+         ));
+     while ($programRelationshipQuery -> have_posts()) {
+         # code...
+         $programRelationshipQuery->the_post();
+         if(get_post_type() == 'profesor'){
+             array_push($results['profesors'],array(
+                 'title' => get_the_title(),
+                 'permalink' => get_the_permalink(),
+                 'thumbnail' =>  get_the_post_thumbnail_url(0,'professorLandscape')
+     
+             ));
+         }
+         if(get_post_type() == 'event'){
+        
+            $eventDate = new DateTime(get_field('event_date'));
+            $description = null;
+            if(has_excerpt()){
+                $description = get_the_excerpt();
+            }else{
+                $description = wp_trim_words( get_the_content(), 18 );
+            }
+            array_push($results['events'],array(
+                'title' => get_the_title(),
+                'permalink' => get_the_permalink(),
+                'month' => $eventDate -> format('M'),
+                'day' => $eventDate -> format('d'),
+                'excerpt' => $description,
+                'content' => wp_trim_words( get_the_content(), 10 )
+            ));
+        }
+         
+ 
+     }
+     //delete duplicated porfesors and events
+     $results['profesors'] = array_values(array_unique($results['profesors'],SORT_REGULAR));
+     $results['events'] = array_values(array_unique($results['events'],SORT_REGULAR));
+  
+   }
+    return $results;
 }
 ?>
