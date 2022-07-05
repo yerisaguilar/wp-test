@@ -1299,6 +1299,7 @@ body.admin-bar .search-overlay {
   background-color: rgba(215, 46, 14, 0.85);
 }
 .professor-card__list-item {
+  
   display: inline-block;
   list-style: none;
 }
