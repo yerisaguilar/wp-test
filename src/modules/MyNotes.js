@@ -21,7 +21,8 @@ class MyNotes {
         const ourNewPost = {
             'title':title.value,
             'content' : content.value,
-            'status': 'publish'
+            'status': 'publish',// private is for private and publish is for public
+            
         }
         
             $.ajax({
@@ -48,12 +49,11 @@ class MyNotes {
                     </li>
                     `).prependTo("#my-notes").hide().slideDown();
 
-                    console.log("congrats");
-                    console.log(response);
                 },
                 error:(response)=>{
-                    console.log("error");
-                    console.log(response);
+                    if(response.responseText.includes("You have reach your note limit")){
+                        $(".note-limit-message").addClass("active");
+                    }
     
                 }
             }); 
@@ -74,7 +74,10 @@ class MyNotes {
             success: (response)=>{
                 thisNote.slideUp();
                 console.log("congrats");
-                console.log(response);
+                if(response.userNoteCount < 5){
+                    $('.note-limit-message').removeClass("active");
+
+                }
             },
             error:(response)=>{
                 console.log("error");
@@ -107,7 +110,6 @@ class MyNotes {
                     
                     this.makeNoteReadOnly(thisNote);
                     console.log("congrats");
-                    console.log(response);
                 },
                 error:(response)=>{
                     console.log("error");
@@ -125,24 +127,6 @@ class MyNotes {
         }else {
             this.makeNoteEditable(thisNote);
         }
-      /*
-        $.ajax({
-            beforeSend: (xhr)=>{
-                xhr.setRequestHeader('X-WP-Nonce', universityData.nonce);
-            },
-            url : universityData.root_url+'/wp-json/w[/v2/note/'+thisNote.data('id'),
-            type: 'UPDATE',
-            data: data,
-            chache: false,
-            success: (response)=>{
-                console.log('Item updated');
-                console.log(response);
-            },
-            error:(response)=>{
-                console.log("error");
-                console.log(response);
-            }
-        });*/
     }
     makeNoteEditable(thisNote){
         thisNote.find(".edit-note").html('<i class="fa fa-times" aria-hidden="true"></i>Cancel');
